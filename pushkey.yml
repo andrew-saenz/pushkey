@@ -1,0 +1,19 @@
+---
+- hosts: DEV
+  become: true
+  become_user: root
+  gather_facts: false
+
+  vars:
+      pubkey: lookup('file', '/home/ansible/.ssh/id_rsa.pub')
+
+  tasks:
+  - name: create empty file
+    file:
+      path: "/root/.ssh/authorized_keys"
+      state: touch
+  - name: put pubkey
+    authorized_key:
+      user: root
+      state: present
+      key: "{{ lookup('file', '/home/ansible/.ssh/id_rsa.pub') }}"
